@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zonefitvibes | Routine Manager</title>
+    <meta name="description" content="Manage your daily workout routine effectively with Zonefitvibes.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+    </div>
+
+    <header class="glass-header">
+        <h1>Zonefitvibes</h1>
+        <p class="subtitle">Conquer Your Routine</p>
+    </header>
+
+    <main class="container">
+        <section class="day-selector glass-panel">
+            <button class="nav-btn" id="prevDayBtn" aria-label="Previous Day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="current-day-display">
+                <h2 id="dayTitle">Day 1</h2>
+                <p id="daySubtitle" class="day-subtitle">Chest + Triceps</p>
+            </div>
+            <button class="nav-btn" id="nextDayBtn" aria-label="Next Day">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </section>
+
+        <section class="routine-container" id="routineContainer">
+            <!-- Exercises will be injected here via JS -->
+        </section>
+        
+        <div class="controls glass-panel">
+             <button id="resetBtn" class="btn btn-outline">Reset Progress</button>
+        </div>
+    </main>
+
+    <script src="app.js?v=4"></script>
+</body>
+</html>
