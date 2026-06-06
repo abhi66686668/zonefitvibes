@@ -14,18 +14,18 @@ const routineData = [
         day: 2,
         title: "Back Width + Biceps",
         exercises: [
-            { name: "Pull-ups", sets: 4, reps: "max" },
-            { name: "Lat Pulldown", sets: 3, reps: "10" },
-            { name: "Straight Arm Pulldown", sets: 3, reps: "12" },
-            { name: "Barbell Curl", sets: 3, reps: "8" },
-            { name: "Hammer Curl", sets: 3, reps: "12" }
+            { name: "Pull-ups", sets: 4, reps: "max", image: "pull_ups.png" },
+            { name: "Lat Pulldown", sets: 3, reps: "10", image: "lat_pulldown.png" },
+            { name: "Straight Arm Pulldown", sets: 3, reps: "12", image: "straight_arm_pulldown.png" },
+            { name: "Barbell Curl", sets: 3, reps: "8", image: "barbell_curl.png" },
+            { name: "Hammer Curl", sets: 3, reps: "12", image: "hammer_curl.png" }
         ]
     },
     {
         day: 3,
         title: "Hamstrings + Glutes",
         exercises: [
-            { name: "RDL", sets: 4, reps: "8" },
+            { name: "RDL", sets: 4, reps: "8", image: "rdl.png" },
             { name: "Lying Curl", sets: 4, reps: "12" },
             { name: "Bulgarian Split Squat", sets: 3, reps: "10" },
             { name: "Hip Thrust", sets: 3, reps: "10" },
