@@ -26,10 +26,10 @@ const routineData = [
         title: "Hamstrings + Glutes",
         exercises: [
             { name: "RDL", sets: 4, reps: "8", image: "rdl.png" },
-            { name: "Lying Curl", sets: 4, reps: "12" },
-            { name: "Bulgarian Split Squat", sets: 3, reps: "10" },
-            { name: "Hip Thrust", sets: 3, reps: "10" },
-            { name: "Seated Calf", sets: 4, reps: "15" }
+            { name: "Lying Curl", sets: 4, reps: "12", image: "lying_curl.png" },
+            { name: "Bulgarian Split Squat", sets: 3, reps: "10", image: "bulgarian_split_squat.png" },
+            { name: "Hip Thrust", sets: 3, reps: "10", image: "hip_thrust.png" },
+            { name: "Seated Calf", sets: 4, reps: "15", image: "seated_calf.png" }
         ]
     },
     {
@@ -41,32 +41,32 @@ const routineData = [
         day: 5,
         title: "Back Thickness + Rear Delts",
         exercises: [
-            { name: "Deadlift / Rack Pull", sets: 3, reps: "5" },
-            { name: "Chest-Supported Row", sets: 4, reps: "8" },
-            { name: "Seated Row", sets: 3, reps: "10" },
-            { name: "Face Pull", sets: 4, reps: "15" }
+            { name: "Deadlift / Rack Pull", sets: 3, reps: "5", image: "deadlift.png" },
+            { name: "Chest-Supported Row", sets: 4, reps: "8", image: "chest_supported_row.png" },
+            { name: "Seated Row", sets: 3, reps: "10", image: "seated_row.png" },
+            { name: "Face Pull", sets: 4, reps: "15", image: "face_pull.png" }
         ]
     },
     {
         day: 6,
         title: "Shoulders + Rear Delts",
         exercises: [
-            { name: "Shoulder Press", sets: 3, reps: "8" },
-            { name: "Lateral Raises", sets: 5, reps: "15" },
-            { name: "Reverse Pec Deck", sets: 4, reps: "15" },
-            { name: "Cable Lateral", sets: 3, reps: "15" }
+            { name: "Shoulder Press", sets: 3, reps: "8", image: "shoulder_press.png" },
+            { name: "Lateral Raises", sets: 5, reps: "15", image: "lateral_raises.png" },
+            { name: "Reverse Pec Deck", sets: 4, reps: "15", image: "reverse_pec_deck.png" },
+            { name: "Cable Lateral", sets: 3, reps: "15", image: "cable_lateral.png" }
         ]
     },
     {
         day: 7,
         title: "Quads",
         exercises: [
-            { name: "Squat", sets: 4, reps: "8" },
-            { name: "Leg Press", sets: 4, reps: "12" },
-            { name: "Leg Extension", sets: 3, reps: "15" },
-            { name: "Walking Lunges", sets: 3, reps: "20" },
-            { name: "Step Up", sets: 2, reps: "10 each" },
-            { name: "Standing Calf", sets: 4, reps: "15" }
+            { name: "Squat", sets: 4, reps: "8", image: "squat.png" },
+            { name: "Leg Press", sets: 4, reps: "12", image: "leg_press.png" },
+            { name: "Leg Extension", sets: 3, reps: "15", image: "leg_extension.png" },
+            { name: "Walking Lunges", sets: 3, reps: "20", image: "walking_lunges.png" },
+            { name: "Step Up", sets: 2, reps: "10 each", image: "step_up.png" },
+            { name: "Standing Calf", sets: 4, reps: "15", image: "standing_calf.png" }
         ]
     }
 ];
@@ -144,8 +144,8 @@ function renderDay() {
 
         let imageHTML = '';
         if (exercise.image) {
-            // Added ?v=real2 to bypass image cache when updating images
-            imageHTML = `<img src="${exercise.image}?v=real2" alt="${exercise.name}" class="exercise-image" />`;
+            // Added ?v=real3 to bypass image cache when updating images
+            imageHTML = `<img src="${exercise.image}?v=real3" alt="${exercise.name}" class="exercise-image" />`;
         }
 
         card.innerHTML = `
