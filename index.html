@@ -9,18 +9,78 @@
     <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
+    <!-- Preloader -->
+    <div id="preloader" class="preloader">
+        <div class="dumbbell-loader">
+            <div class="weight left-weight"></div>
+            <div class="bar"></div>
+            <div class="weight right-weight"></div>
+        </div>
+        <h2 class="preloader-text">Warming Up...</h2>
+    </div>
     <div class="background-elements">
         <div class="glow glow-1"></div>
         <div class="glow glow-2"></div>
     </div>
 
-    <header class="glass-header">
+    <nav class="top-nav glass-panel">
+        <div class="nav-logo">
+            <img src="logo.png" alt="Body Zone Logo" class="logo-image">
+            <span class="logo-text">Body Zone</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" data-view="view-home" class="active-nav">Home</a></li>
+            <li><a href="#" data-view="view-routine">Daily Routine</a></li>
+            <li><a href="#" data-view="view-diet">Diet</a></li>
+        </ul>
+    </nav>
+
+    <div class="views-container">
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="page-view active-view">
+            <div class="home-grid">
+                <div class="home-image-col">
+                    <img src="deadlift.png" alt="Fitness Model" id="heroImage" class="hero-image glass-panel">
+                </div>
+                <div class="home-text-col" style="position: relative;">
+                    <h1 class="hero-title">Welcome to Zonefitvibes</h1>
+                    <p class="hero-desc" style="max-width: 85%;">Experience the ultimate fitness journey where we combine high intensity with a structured routine. Our systematic daily tracker will help you crush your goals and transform your life. Join us today and discover the power of consistency.</p>
+                    
+                </div>
+            </div>
+            
+            <div class="marquee-container glass-panel">
+                <div class="marquee-content">
+                    <span>"The hard part isn't getting your body in shape. The hard part is getting your mind in shape."</span>
+                    <span class="dot">•</span>
+                    <span>"Blood, sweat and respect. First two you give, last one you earn."</span>
+                    <span class="dot">•</span>
+                    <span>"We are what we repeatedly do. Excellence then is not an act but a habit."</span>
+                    <span class="dot">•</span>
+                    <span>"If something stands between you and your success, move it. Never be denied."</span>
+                    <span class="dot">•</span>
+                    <span>"Don't stop when you're tired. Stop when you're done."</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROUTINE VIEW -->
+        <div id="view-routine" class="page-view hidden-view">
+            <header class="glass-header" style="margin-top: 0;">
         <h1>Zonefitvibes</h1>
         <p class="subtitle">Conquer Your Routine</p>
+        <button id="viewCalendarBtn" class="btn btn-outline" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.8rem;">View Calendar</button>
     </header>
 
-    <main class="container">
-        <section class="day-selector glass-panel">
+            <main class="container">
+                <div class="glass-panel quote-banner" style="margin-bottom: 1.5rem; padding: 2rem; text-align: center; position: relative; overflow: hidden; border-left: 4px solid var(--accent-blue); transition: all 0.3s ease;">
+                    <div class="quote-icon" style="position: absolute; top: -15px; left: 10px; font-size: 5rem; color: var(--glass-border); font-family: Georgia, serif; line-height: 1; pointer-events: none;">“</div>
+                    <p class="quote-text" id="motivationQuote" style="font-style: italic; position: relative; z-index: 1; margin-bottom: 1rem;">No pain, no gain. Shut up and train.</p>
+                    <p class="quote-author" id="motivationAuthor" style="position: relative; z-index: 1; margin: 0;">UNKNOWN</p>
+                </div>
+                
+                <section class="day-selector glass-panel">
             <button class="nav-btn" id="prevDayBtn" aria-label="Previous Day">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
@@ -38,9 +98,46 @@
         </section>
         
         <div class="controls glass-panel">
+             <button id="finishWorkoutBtn" class="btn" style="background: var(--accent-blue); color: white; border: none; margin-right: 1rem;">Finish Workout</button>
              <button id="resetBtn" class="btn btn-outline">Reset Progress</button>
         </div>
     </main>
+</div> <!-- End Routine View -->
+
+    <!-- DIET VIEW -->
+    <div id="view-diet" class="page-view hidden-view">
+        <div class="glass-panel" style="padding: 3rem; text-align: center; max-width: 600px; margin: 2rem auto;">
+            <h2>Diet Plan</h2>
+            <p style="color: var(--text-muted); margin-top: 1rem;">Nutrition tracking coming soon. Fuel your workouts properly to maximize gains.</p>
+        </div>
+    </div>
+    </div> <!-- End views container -->
+
+    <!-- Calendar Modal -->
+    <div id="calendarModal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h2>Workout History</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="calendar-controls">
+                <button id="prevMonthBtn" class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <h3 id="calendarMonthYear">Month Year</h3>
+                <button id="nextMonthBtn" class="nav-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div>
+                <!-- Days will be injected here via JS -->
+            </div>
+            <div class="streak-info" style="margin-top: 1.5rem; text-align: center;">
+                <p style="color: var(--text-muted);">Total Workouts: <span id="totalWorkoutsCount" style="color: var(--accent-blue); font-weight: bold; font-size: 1.2rem;">0</span></p>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js?v=6"></script>
 </body>

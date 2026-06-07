@@ -81,8 +81,33 @@ const nextDayBtn = document.getElementById('nextDayBtn');
 const routineContainer = document.getElementById('routineContainer');
 const resetBtn = document.getElementById('resetBtn');
 
+// New DOM elements for Calendar
+const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');
+const viewCalendarBtn = document.getElementById('viewCalendarBtn');
+const calendarModal = document.getElementById('calendarModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const prevMonthBtn = document.getElementById('prevMonthBtn');
+const nextMonthBtn = document.getElementById('nextMonthBtn');
+const calendarMonthYear = document.getElementById('calendarMonthYear');
+const calendarGrid = document.getElementById('calendarGrid');
+const totalWorkoutsCount = document.getElementById('totalWorkoutsCount');
+
+let currentCalendarDate = new Date();
+
+// Remove preloader on load
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        setTimeout(() => {
+            preloader.classList.add('hidden');
+        }, 1500); // 1500ms delay to ensure the animation is seen
+    }
+});
+
 // Initialize
 function init() {
+    setupNavigation();
+    setupImageCarousel();
     // Check if there's a saved day in local storage
     const savedDay = localStorage.getItem('zonefitvibes_currentDay');
     if (savedDay !== null) {
@@ -98,6 +123,7 @@ function init() {
 }
 
 function renderDay() {
+    updateMotivation();
     const dayData = routineData[currentDayIndex];
     
     // Update headers
@@ -214,6 +240,77 @@ function setupEventListeners() {
             renderDay();
         }
     });
+
+    if (finishWorkoutBtn) {
+        finishWorkoutBtn.addEventListener('click', () => {
+            const dayData = routineData[currentDayIndex];
+            
+            // Generate local YYYY-MM-DD
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
+            let history = JSON.parse(localStorage.getItem('zonefitvibes_history') || '[]');
+            
+            // Prevent exact same day duplicate
+            if (!history.find(h => h.date === dateStr && h.dayIndex === currentDayIndex)) {
+                history.push({
+                    date: dateStr,
+                    dayIndex: currentDayIndex,
+                    title: dayData.title
+                });
+                localStorage.setItem('zonefitvibes_history', JSON.stringify(history));
+            }
+
+            // Clear checkboxes
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('set-')) {
+                    keysToRemove.push(key);
+                }
+            }
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+
+            // Move to next day
+            if (currentDayIndex < routineData.length - 1) {
+                currentDayIndex++;
+            } else {
+                currentDayIndex = 0;
+            }
+            renderDay();
+        });
+    }
+
+    if (viewCalendarBtn) {
+        viewCalendarBtn.addEventListener('click', () => {
+            currentCalendarDate = new Date(); // Reset to current month on open
+            renderCalendar();
+            calendarModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            calendarModal.classList.add('hidden');
+        });
+    }
+
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener('click', () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener('click', () => {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
     
     resetBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to reset all your progress for this week?')) {
@@ -234,3 +331,149 @@ function setupEventListeners() {
 
 // Run app
 document.addEventListener('DOMContentLoaded', init);
+
+const motivationQuotes = [
+    { text: "The hard part isn't getting your body in shape. The hard part is getting your mind in shape.", author: "Amby Burfoot" },
+    { text: "Blood, sweat and respect. First two you give, last one you earn.", author: "The Rock" },
+    { text: "We are what we repeatedly do. Excellence then is not an act but a habit.", author: "Aristotle" },
+    { text: "If something stands between you and your success, move it. Never be denied.", author: "Dwayne Johnson" },
+    { text: "Your body can stand almost anything. It’s your mind that you have to convince.", author: "Unknown" },
+    { text: "Don't stop when you're tired. Stop when you're done.", author: "David Goggins" },
+    { text: "Success starts with self-discipline.", author: "Unknown" },
+    { text: "No pain, no gain. Shut up and train.", author: "Unknown" },
+    { text: "The only bad workout is the one that didn't happen.", author: "Unknown" },
+    { text: "What seems impossible today will one day become your warm-up.", author: "Unknown" }
+];
+
+function updateMotivation() {
+    const quoteEl = document.getElementById('motivationQuote');
+    const authorEl = document.getElementById('motivationAuthor');
+    if (quoteEl && authorEl) {
+        const randomQuote = motivationQuotes[Math.floor(Math.random() * motivationQuotes.length)];
+        quoteEl.textContent = randomQuote.text;
+        authorEl.textContent = randomQuote.author;
+    }
+}
+
+function renderCalendar() {
+    if (!calendarMonthYear || !calendarGrid) return;
+    
+    const year = currentCalendarDate.getFullYear();
+    const month = currentCalendarDate.getMonth();
+    
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    calendarMonthYear.textContent = `${monthNames[month]} ${year}`;
+    
+    // Get first day of month and total days
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    
+    let history = JSON.parse(localStorage.getItem('zonefitvibes_history') || '[]');
+    if(totalWorkoutsCount) totalWorkoutsCount.textContent = history.length;
+
+    // Clear previous grid
+    calendarGrid.innerHTML = '<div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div>';
+    
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+    // Empty cells before start of month
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyCell);
+    }
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        dayCell.textContent = i;
+        
+        if (isCurrentMonth && i === today.getDate()) {
+            dayCell.classList.add('today');
+        }
+
+        // Check if completed
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        // Find if multiple workouts were completed on this day
+        const completedWorkouts = history.filter(h => h.date === dateStr);
+        
+        if (completedWorkouts.length > 0) {
+            dayCell.classList.add('completed');
+            dayCell.title = completedWorkouts.map(w => w.title).join(' & ');
+        }
+
+        calendarGrid.appendChild(dayCell);
+    }
+}
+
+function setupNavigation() {
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const views = document.querySelectorAll('.page-view');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Show preloader for page transition
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.remove('hidden');
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                }, 1500);
+            }
+            
+            // Remove active class from all links
+            navLinks.forEach(l => l.classList.remove('active-nav'));
+            
+            // Add active class to clicked link
+            e.target.classList.add('active-nav');
+            
+            // Get target view id
+            const targetViewId = e.target.getAttribute('data-view');
+            
+            // Hide all views
+            views.forEach(view => {
+                view.classList.remove('active-view');
+                view.classList.add('hidden-view');
+            });
+            
+            // Show target view
+            const targetView = document.getElementById(targetViewId);
+            if (targetView) {
+                targetView.classList.remove('hidden-view');
+                targetView.classList.add('active-view');
+            }
+        });
+    });
+}
+
+// Home Page Image Carousel
+const heroImages = [
+    'deadlift.png',
+    'squat.png',
+    'pull_ups.png',
+    'shoulder_press.png',
+    'rdl.png'
+];
+let currentHeroImageIndex = 0;
+
+function setupImageCarousel() {
+    const heroImg = document.getElementById('heroImage');
+    if (!heroImg) return;
+
+    setInterval(() => {
+        // Fade out
+        heroImg.style.opacity = 0;
+        
+        setTimeout(() => {
+            // Change image source after fade out completes
+            currentHeroImageIndex = (currentHeroImageIndex + 1) % heroImages.length;
+            heroImg.src = heroImages[currentHeroImageIndex];
+            
+            // Fade back in
+            heroImg.style.opacity = 1;
+        }, 500); // 500ms matches the CSS transition duration
+    }, 3000); // Change every 3 seconds
+}
