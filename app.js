@@ -434,6 +434,9 @@ function setupNavigation() {
             // Get target view id
             const targetViewId = e.target.getAttribute('data-view');
             
+            // Save to localStorage
+            localStorage.setItem('zonefitvibes_lastView', targetViewId);
+            
             // Hide all views
             views.forEach(view => {
                 view.classList.remove('active-view');
@@ -448,6 +451,27 @@ function setupNavigation() {
             }
         });
     });
+
+    // Restore last view from localStorage
+    const lastViewId = localStorage.getItem('zonefitvibes_lastView');
+    if (lastViewId) {
+        const targetLink = Array.from(navLinks).find(l => l.getAttribute('data-view') === lastViewId);
+        if (targetLink) {
+            navLinks.forEach(l => l.classList.remove('active-nav'));
+            targetLink.classList.add('active-nav');
+            
+            views.forEach(view => {
+                view.classList.remove('active-view');
+                view.classList.add('hidden-view');
+            });
+            
+            const targetView = document.getElementById(lastViewId);
+            if (targetView) {
+                targetView.classList.remove('hidden-view');
+                targetView.classList.add('active-view');
+            }
+        }
+    }
 }
 
 // Home Page Image Carousel
