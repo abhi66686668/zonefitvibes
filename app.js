@@ -108,6 +108,7 @@ window.addEventListener('load', () => {
 function init() {
     setupNavigation();
     setupImageCarousel();
+    initTimers();
     // Check if there's a saved day in local storage
     const savedDay = localStorage.getItem('zonefitvibes_currentDay');
     if (savedDay !== null) {
@@ -472,8 +473,260 @@ function setupImageCarousel() {
             currentHeroImageIndex = (currentHeroImageIndex + 1) % heroImages.length;
             heroImg.src = heroImages[currentHeroImageIndex];
             
-            // Fade back in
             heroImg.style.opacity = 1;
         }, 500); // 500ms matches the CSS transition duration
     }, 3000); // Change every 3 seconds
+}
+
+// --- TIMER LOGIC ---
+
+// Stopwatch Variables
+let swStartTime = 0;
+let swElapsedTime = 0;
+let swInterval = null;
+let swIsRunning = false;
+let swLaps = [];
+
+// Countdown Variables
+let cdEndTime = 0;
+let cdInterval = null;
+let cdIsRunning = false;
+let cdTotalSeconds = 0;
+
+function initTimers() {
+    // 1. Load from localStorage
+    loadTimerState();
+
+    // 2. Stopwatch Event Listeners
+    document.getElementById('swStartBtn').addEventListener('click', toggleStopwatch);
+    document.getElementById('swResetBtn').addEventListener('click', resetStopwatch);
+    document.getElementById('swLapBtn').addEventListener('click', recordLap);
+
+    // 3. Countdown Event Listeners
+    document.getElementById('cdStartBtn').addEventListener('click', toggleCountdown);
+    document.getElementById('cdResetBtn').addEventListener('click', resetCountdown);
+}
+
+function saveTimerState() {
+    localStorage.setItem('zonefitvibes_timers', JSON.stringify({
+        swStartTime,
+        swElapsedTime,
+        swIsRunning,
+        swLaps,
+        cdEndTime,
+        cdIsRunning,
+        cdTotalSeconds
+    }));
+}
+
+function loadTimerState() {
+    const saved = localStorage.getItem('zonefitvibes_timers');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            swElapsedTime = data.swElapsedTime || 0;
+            swIsRunning = data.swIsRunning || false;
+            swLaps = data.swLaps || [];
+            cdEndTime = data.cdEndTime || 0;
+            cdIsRunning = data.cdIsRunning || false;
+            cdTotalSeconds = data.cdTotalSeconds || 0;
+            
+            // Re-sync stopwatch
+            if (swIsRunning) {
+                swStartTime = data.swStartTime || (Date.now() - swElapsedTime);
+                startStopwatchInterval();
+                document.getElementById('swStartBtn').textContent = 'Stop';
+                document.getElementById('swLapBtn').disabled = false;
+            } else {
+                updateStopwatchDisplay(swElapsedTime);
+            }
+            renderLaps();
+
+            // Re-sync countdown
+            if (cdIsRunning) {
+                if (Date.now() < cdEndTime) {
+                    startCountdownInterval();
+                    document.getElementById('cdStartBtn').textContent = 'Stop';
+                    document.getElementById('countdownInput').style.display = 'none';
+                    document.getElementById('countdownDisplay').style.display = 'block';
+                } else {
+                    // Time already expired while away
+                    cdIsRunning = false;
+                    triggerAlarm();
+                }
+            } else if (cdTotalSeconds > 0) {
+                // Was paused
+                updateCountdownDisplay(cdTotalSeconds);
+                document.getElementById('countdownInput').style.display = 'none';
+                document.getElementById('countdownDisplay').style.display = 'block';
+            }
+        } catch (e) {
+            console.error('Error loading timer state', e);
+        }
+    }
+}
+
+// --- STOPWATCH ---
+function toggleStopwatch() {
+    if (swIsRunning) {
+        // Stop
+        clearInterval(swInterval);
+        swIsRunning = false;
+        swElapsedTime = Date.now() - swStartTime;
+        document.getElementById('swStartBtn').textContent = 'Start';
+        document.getElementById('swLapBtn').disabled = true;
+    } else {
+        // Start
+        swStartTime = Date.now() - swElapsedTime;
+        swIsRunning = true;
+        startStopwatchInterval();
+        document.getElementById('swStartBtn').textContent = 'Stop';
+        document.getElementById('swLapBtn').disabled = false;
+    }
+    saveTimerState();
+}
+
+function startStopwatchInterval() {
+    clearInterval(swInterval);
+    swInterval = setInterval(() => {
+        const currentElapsed = Date.now() - swStartTime;
+        updateStopwatchDisplay(currentElapsed);
+    }, 10);
+}
+
+function updateStopwatchDisplay(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const msecs = Math.floor((ms % 1000) / 10);
+    const secs = totalSec % 60;
+    const mins = Math.floor(totalSec / 60) % 60;
+    const hrs = Math.floor(totalSec / 3600);
+
+    let display = '';
+    if (hrs > 0) display += String(hrs).padStart(2, '0') + ':';
+    display += String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0') + '.' + String(msecs).padStart(2, '0');
+    
+    document.getElementById('stopwatchDisplay').textContent = display;
+}
+
+function resetStopwatch() {
+    clearInterval(swInterval);
+    swIsRunning = false;
+    swElapsedTime = 0;
+    swLaps = [];
+    document.getElementById('swStartBtn').textContent = 'Start';
+    document.getElementById('swLapBtn').disabled = true;
+    updateStopwatchDisplay(0);
+    renderLaps();
+    saveTimerState();
+}
+
+function recordLap() {
+    if (!swIsRunning) return;
+    const currentElapsed = Date.now() - swStartTime;
+    swLaps.unshift(currentElapsed); // Add to beginning
+    renderLaps();
+    saveTimerState();
+}
+
+function renderLaps() {
+    const list = document.getElementById('lapList');
+    list.innerHTML = '';
+    swLaps.forEach((lapMs, index) => {
+        const li = document.createElement('li');
+        const lapNumber = swLaps.length - index;
+        li.innerHTML = `<span>Lap ${lapNumber}</span><span>${formatTime(lapMs)}</span>`;
+        list.appendChild(li);
+    });
+}
+
+function formatTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const msecs = Math.floor((ms % 1000) / 10);
+    const secs = totalSec % 60;
+    const mins = Math.floor(totalSec / 60) % 60;
+    const hrs = Math.floor(totalSec / 3600);
+    let display = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0') + '.' + String(msecs).padStart(2, '0');
+    if (hrs > 0) display = String(hrs).padStart(2, '0') + ':' + display;
+    return display;
+}
+
+// --- COUNTDOWN REMINDER ---
+function toggleCountdown() {
+    const alarmMsg = document.getElementById('alarmMessage');
+    alarmMsg.classList.add('hidden');
+
+    if (cdIsRunning) {
+        // Pause
+        clearInterval(cdInterval);
+        cdIsRunning = false;
+        cdTotalSeconds = Math.max(0, Math.ceil((cdEndTime - Date.now()) / 1000));
+        document.getElementById('cdStartBtn').textContent = 'Resume';
+    } else {
+        // Start or Resume
+        if (cdTotalSeconds === 0) {
+            // Read inputs
+            const h = parseInt(document.getElementById('cdHours').value) || 0;
+            const m = parseInt(document.getElementById('cdMinutes').value) || 0;
+            const s = parseInt(document.getElementById('cdSeconds').value) || 0;
+            cdTotalSeconds = h * 3600 + m * 60 + s;
+        }
+
+        if (cdTotalSeconds > 0) {
+            cdEndTime = Date.now() + (cdTotalSeconds * 1000);
+            cdIsRunning = true;
+            document.getElementById('countdownInput').style.display = 'none';
+            document.getElementById('countdownDisplay').style.display = 'block';
+            document.getElementById('cdStartBtn').textContent = 'Stop';
+            startCountdownInterval();
+        }
+    }
+    saveTimerState();
+}
+
+function startCountdownInterval() {
+    clearInterval(cdInterval);
+    updateCountdownDisplay(Math.max(0, Math.ceil((cdEndTime - Date.now()) / 1000)));
+    cdInterval = setInterval(() => {
+        const remaining = Math.max(0, Math.ceil((cdEndTime - Date.now()) / 1000));
+        updateCountdownDisplay(remaining);
+        
+        if (remaining <= 0) {
+            clearInterval(cdInterval);
+            cdIsRunning = false;
+            cdTotalSeconds = 0;
+            triggerAlarm();
+            document.getElementById('cdStartBtn').textContent = 'Start';
+            saveTimerState();
+        }
+    }, 1000);
+}
+
+function updateCountdownDisplay(totalSec) {
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    let display = '';
+    if (hrs > 0) display += String(hrs).padStart(2, '0') + ':';
+    display += String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    document.getElementById('countdownDisplay').textContent = display;
+}
+
+function resetCountdown() {
+    clearInterval(cdInterval);
+    cdIsRunning = false;
+    cdTotalSeconds = 0;
+    cdEndTime = 0;
+    document.getElementById('cdStartBtn').textContent = 'Start';
+    document.getElementById('countdownInput').style.display = 'flex';
+    document.getElementById('countdownDisplay').style.display = 'none';
+    document.getElementById('cdHours').value = '';
+    document.getElementById('cdMinutes').value = '';
+    document.getElementById('cdSeconds').value = '';
+    document.getElementById('alarmMessage').classList.add('hidden');
+    saveTimerState();
+}
+
+function triggerAlarm() {
+    const alarmMsg = document.getElementById('alarmMessage');
+    alarmMsg.classList.remove('hidden');
 }

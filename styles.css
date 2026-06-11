@@ -846,6 +846,134 @@ h1 {
     50% { opacity: 1; }
 }
 
+/* Timer View Layout */
+.timer-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 95%;
+}
+
+.timer-panel {
+    width: 100%;
+    min-width: 320px;
+    padding: 2.5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.timer-panel h2 {
+    color: var(--accent-blue);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.time-display {
+    font-size: 4rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+    color: var(--text-main);
+    text-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+}
+
+.countdown-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--text-muted);
+}
+
+.countdown-inputs input {
+    width: 80px;
+    height: 70px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 2.5rem;
+    text-align: center;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.countdown-inputs input:focus {
+    border-color: var(--accent-blue);
+}
+
+.countdown-inputs input::-webkit-outer-spin-button,
+.countdown-inputs input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.timer-controls .btn {
+    min-width: 100px;
+}
+
+.lap-list {
+    list-style: none;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 1rem;
+    text-align: left;
+    padding-right: 10px;
+}
+
+.lap-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-muted);
+    font-family: monospace;
+    font-size: 1.1rem;
+}
+
+.lap-list li span:first-child {
+    color: var(--accent-blue);
+}
+
+.lap-list::-webkit-scrollbar {
+    width: 6px;
+}
+.lap-list::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 3px;
+}
+
+.alarm-message {
+    color: #ef4444;
+    font-size: 1.5rem;
+    font-weight: 800;
+    animation: flash 1s infinite alternate;
+    margin-top: 1rem;
+}
+
+@keyframes flash {
+    from { opacity: 1; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+    to { opacity: 0.3; }
+}
+
 /* --- COMPREHENSIVE RESPONSIVENESS --- */
 
 /* Laptop & Small Desktop (max 1024px) */
@@ -954,6 +1082,18 @@ h1 {
     .logo-image {
         width: 35px;
         height: 35px;
+    }
+    .time-display {
+        font-size: 2.8rem;
+    }
+    .countdown-inputs input {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+    .timer-panel {
+        min-width: 100%;
+        padding: 1.5rem;
     }
 }
 

@@ -32,6 +32,7 @@
             <li><a href="#" data-view="view-home" class="active-nav">Home</a></li>
             <li><a href="#" data-view="view-routine">Daily Routine</a></li>
             <li><a href="#" data-view="view-diet">Diet</a></li>
+            <li><a href="#" data-view="view-timer">Timer</a></li>
         </ul>
     </nav>
 
@@ -109,6 +110,41 @@
         <div class="glass-panel" style="padding: 3rem; text-align: center; max-width: 600px; margin: 2rem auto;">
             <h2>Diet Plan</h2>
             <p style="color: var(--text-muted); margin-top: 1rem;">Nutrition tracking coming soon. Fuel your workouts properly to maximize gains.</p>
+        </div>
+    </div>
+
+    <!-- TIMER VIEW -->
+    <div id="view-timer" class="page-view hidden-view">
+        <div class="timer-layout">
+            <!-- Stopwatch -->
+            <div class="glass-panel timer-panel">
+                <h2>Stopwatch</h2>
+                <div class="time-display" id="stopwatchDisplay">00:00:00.00</div>
+                <div class="timer-controls">
+                    <button id="swStartBtn" class="btn btn-outline">Start</button>
+                    <button id="swLapBtn" class="btn btn-outline" disabled>Lap</button>
+                    <button id="swResetBtn" class="btn btn-outline">Reset</button>
+                </div>
+                <ul class="lap-list" id="lapList"></ul>
+            </div>
+
+            <!-- Reminder / Countdown -->
+            <div class="glass-panel timer-panel">
+                <h2>Reminder Timer</h2>
+                <div class="time-display" id="countdownDisplay" style="display: none;">00:00:00</div>
+                <div id="countdownInput" class="countdown-inputs">
+                    <input type="number" id="cdHours" placeholder="HH" min="0" max="99">
+                    <span>:</span>
+                    <input type="number" id="cdMinutes" placeholder="MM" min="0" max="59">
+                    <span>:</span>
+                    <input type="number" id="cdSeconds" placeholder="SS" min="0" max="59">
+                </div>
+                <div class="timer-controls">
+                    <button id="cdStartBtn" class="btn btn-outline">Start</button>
+                    <button id="cdResetBtn" class="btn btn-outline">Reset</button>
+                </div>
+                <div id="alarmMessage" class="alarm-message hidden">Time's Up!</div>
+            </div>
         </div>
     </div>
     </div> <!-- End views container -->
